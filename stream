@@ -1,0 +1,200 @@
+
+const pdfmake =require( 'pdfmake/build/pdfmake')
+const { response } = require("express");
+const { request } = require("express");
+const{TDocumentDefinitions}= require('pdfmake/build/pdfmake')
+const PdfPrinter = require('pdfmake');
+const fs = require('fs');
+const axios =require( 'axios');
+
+const instance = axios.create({
+  // baseURL: 'https://back-aps-tascom.herokuapp.com'
+  baseURL: 'http://localhost:5000/' })
+
+module.exports = {
+    async Reports(request,response){
+        const data=  'dd/MM/yyyy HH:MM'
+        const datafiltro= 'dd/MM/yyyy '
+        
+    const cabecalho =  [
+        {
+            table:{
+            
+                headerRows: 1,
+                widths: ['*','*','*'],
+                body: [
+                    
+                    [
+                        {text: 'APS-Tascom ',  style: 'noBorders', fontSize: 10,alignment:'left' ,margin:[10,0,0,0]},  //alignment:'center','left'
+                        {text: 'TASCOM TECNOLOGIA ',  style: 'noBorders', fontSize: 10,alignment:'center' ,margin:[0,0,0,0]},
+                        {text:   'Em:' + data,  style: 'noBorders', fontSize: 10,alignment:'right' ,margin:[0,0,10,0]},
+                    
+                    ],
+
+                ]
+            },
+            layout:'noBorders'
+        }
+    ];
+
+    const tpRelatorio = [
+        {
+            table:{
+            
+                headerRows: 1,
+                widths: ['*'],
+                body: [
+                    
+                    [
+                        {text: 'Relatorio de Pacientes Faltosos ',  style: 'noBorders', fontSize: 10,alignment:'center' ,margin:[0,0,0,0]},
+                    
+                    ],
+
+                ]
+            },
+            layout:'noBorders'
+        }
+    ];
+
+    const filtro = [
+        {
+            table:{
+               
+                headerRows: 1,
+                widths: ['*'],
+                body: [
+                    
+                    [
+                        
+                        {text: ' Periodo de  '+ datafiltro +' até '+ datafiltro+ ' | Setor : '+' | Serviço: * ', fontSize: 10,alignment:'center' ,margin:[0,2,0,2] },
+                      
+                    ],
+                ]
+            },
+            layout:'noBorders'
+        }
+    ];
+    instance.get("/api/attendances").then(async function (result) {
+        await result.data.forEach((e) => {
+    const dadoss =[
+        {
+            table:{
+                style:'tableExample',
+                headerRows: 1,
+                widths: [30,30,30,30,30,30,30,30,30,30 ],
+                
+                body: [
+                   
+                    [
+                        {text: '1Cod.Atend', style: 'tableHeader', fontSize: 11,alignment: 'center', border:[false,false,false,true]},
+                        {text: '2Tp.Prestador', style: 'tableHeader', alignment: 'center',fontSize: 11,border:[false,false,false,true] },
+                        {text: '3Prestador ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '4Prestador', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '5Setor  ', style: 'tableHeader', fontSize: 11,alignment: 'center',border:[false,false,false,true]},
+                        {text: '6Serviço  ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '7Cod.Atend', style: 'tableHeader', fontSize: 11,alignment: 'center', border:[false,false,false,true]},
+                        {text: '8Tp.Prestador', style: 'tableHeader', alignment: 'center',fontSize: 11,border:[false,false,false,true] },
+                        {text: '9Prestador ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '10Prestador', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                       
+                       
+                        
+                    ],
+                    
+                    
+                     
+                ]
+            },
+        }
+    ];
+        })})
+    const details = [
+        {
+            table:{
+                style:'tableExample',
+                headerRows: 1,
+                widths: [30,30,30,30,30,30,30,30,30,30 ],margin:[10,20,10,20],
+                
+                body: [
+                   
+                    [
+                        {text: '1Cod.Atend', style: 'tableHeader', fontSize: 11,alignment: 'center', border:[false,false,false,true]},
+                        {text: '2Tp.Prestador', style: 'tableHeader', alignment: 'center',fontSize: 11,border:[false,false,false,true] },
+                        {text: '3Prestador ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '4Prestador', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '5Setor  ', style: 'tableHeader', fontSize: 11,alignment: 'center',border:[false,false,false,true]},
+                        {text: '6Serviço  ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '7Cod.Atend', style: 'tableHeader', fontSize: 11,alignment: 'center', border:[false,false,false,true]},
+                        {text: '8Tp.Prestador', style: 'tableHeader', alignment: 'center',fontSize: 11,border:[false,false,false,true] },
+                        {text: '9Prestador ', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                        {text: '10Prestador', style: 'tableHeader', fontSize: 11,border:[false,false,false,true]},
+                       
+                        
+                    ],
+                    
+                     
+                     
+                ]
+            },
+            layout: {
+				hLineWidth: function (i, node) {//horizontal
+					return (i === 1 || i === node.table.body.length) ? 2 : 1;
+				},
+				vLineWidth: function (i, node) {//vertical
+					return (i === 0 || i === node.table.widths.length) ? 2 : 2;
+				},
+				hLineColor: function (i, node) {
+					return (i ===  1 || i === node.table.body.length) ? 'black' : 'gray' ;
+				},
+               
+				vLineColor: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 'white' : 'white';
+				},
+            },   
+        }
+    ];
+    const total =  [{  text: 'Total de Atendimentos:' , fontSize: 10,bold:true,  margin:[10,100,1,15] }]
+    // function Rodape(currentPage, pageCount){
+    //     return  {text: '\n'+' Emitido por:' + "Tom" +' \n'+'Paginas' + currentPage.toString() + '/' + pageCount , alignment: 'right', fontSize: 10, bold:true,margin: [0, 0, 10, 0] }
+    //                                                                                       //Margin [ left, top, right, bottom ]
+    // }
+        const fonts ={
+            Helvetica: {
+                normal: 'Helvetica',
+                bold: 'Helvetica-Bold',
+                italics: 'Helvetica-Oblique',
+                bolditalics: 'Helvetica-BoldOblique'
+            }
+        }
+        const printer = new PdfPrinter(fonts);
+            
+            const docDefinitions ={
+                pageMargins:[10,20,30,10],
+                pageSize: 'A4',        
+                defaultStyle:{font:"Helvetica"},
+                content: [ cabecalho, tpRelatorio , filtro,dadoss,details,total],
+        }
+        
+        const pdfDoc = printer.createPdfKitDocument(docDefinitions);
+        
+        //pdfDoc.pipe(fs.createWriteStream('document.pdf'));
+        const body = [];
+  
+        pdfDoc.on('data', (chunk) => {
+            // Storing the chunk data
+            body.push(chunk);
+        });
+        pdfDoc.end();
+  
+        pdfDoc.on('end', () => {
+  
+            // Parsing the chunk data
+            const result = Buffer.concat(body);
+            response.end(result)
+        })
+              
+
+      
+        
+    }
+}
